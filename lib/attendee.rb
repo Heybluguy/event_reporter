@@ -9,7 +9,8 @@ class Attendee
     @street = info[:Street]
     @city = info[:City]
     @state = info[:State]
-    @zipcode = [:Zipcode]
+    @zipcode = info[:Zipcode]
   end
+
 
 end
