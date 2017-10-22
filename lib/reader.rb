@@ -13,6 +13,5 @@ class Reader
 
   def parse_csv(file_path)
     read_file(file_path).map {|row| Attendee.new(row)}
-
   end
 end
