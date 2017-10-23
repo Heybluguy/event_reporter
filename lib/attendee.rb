@@ -20,4 +20,5 @@ class Attendee
     @state = info[:state]
     @zipcode = info[:zipcode]
   end
+
 end
