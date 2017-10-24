@@ -16,14 +16,19 @@ class Reporter
     contents.each do |row|
       attendee = Attendee.new(row)
       @queue << attendee
-
     end
-    # binding.pry
+  end
 
+  def find_first_names(name)
+    @queue.each do |attendee|
+      return attendee.first_name  if attendee.first_name == name
+    end
+    "Not found"
   end
 
 end
 
 
-reporter = Reporter.new
-puts reporter.populate_queue("./data/attendee_fixture.csv")
+# reporter = Reporter.new
+# reporter.populate_queue("./data/attendee_fixture.csv")
+# reporter.find_first_names
