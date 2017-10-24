@@ -20,11 +20,15 @@ class Reporter
   end
 
   def find_first_names(name)
-    @queue.each do |attendee|
-      return attendee.first_name  if attendee.first_name == name
+    @queue.select do |attendee|
+      attendee if attendee.first_name == name
     end
-    "Not found"
   end
+
+  def queue_clear
+    @queue = []
+  end
+
 
 end
 
