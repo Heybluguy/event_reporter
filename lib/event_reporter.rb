@@ -1,38 +1,7 @@
-require "csv"
-require "./lib/cleaner"
-require "./lib/attendee"
-require "pry"
 
 
-class Reporter
-  attr_reader :queue
-  def initialize
-     @cleaner = Cleaner.new
-     @queue = []
-  end
 
-  def populate_queue(csv_path)
-    contents = CSV.open csv_path, headers: true, header_converters: :symbol
-    contents.each do |row|
-      attendee = Attendee.new(row)
-      @queue << attendee
-    end
-  end
-
-  def find_first_names(name)
-    @queue.select do |attendee|
-      attendee if attendee.first_name == name
-    end
-  end
-
-  def queue_clear
-    @queue = []
-  end
-
-
-end
-
-
-# reporter = Reporter.new
-# reporter.populate_queue("./data/attendee_fixture.csv")
-# reporter.find_first_names
+reporter = Reporter.new
+reporter.load_attendees("./data/full_event_attendees (1).csv")
+reporter.find_city("Salt Lake City")
+reporter.queue_save("city_sample.csv")
