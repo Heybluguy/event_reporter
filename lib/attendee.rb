@@ -17,7 +17,7 @@ class Attendee
     @homephone = info[:homephone]
     @street = info[:street]
     @city = info[:city].to_s
-    @state = info[:state]
+    @state = info[:state].to_s
     @zipcode = info[:zipcode]
   end
 end
