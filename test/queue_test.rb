@@ -164,4 +164,28 @@ class QueueTest < MiniTest::Test
 
         assert_equal 1, actual
     end
+
+    def test_queue_print_prints_out_current_queue
+        queue = Queue.new
+        queue.load_attendees
+        actual = queue.find_first_name("mary kate")
+        count = queue.queue_count
+        expected = "Curry, Mary Kate, wmppydaymaker@jumpstartlab.com, 21230, Baltimore, MD, 1509 Jackson Street, 202-328-1000"
+
+        assert_equal 1, count
+        assert_equal "Mary Kate", actual.first.first_name
+        assert_equal expected, queue.queue_print
+    end
+
+    def test_queue_print_by_last_name_prints_out_ordered_current_queue
+        queue = Queue.new
+        queue.load_attendees
+        queue.find_first_name("mary")
+        count = queue.queue_count
+        actual = queue.queue_print("by last_name").split("\n")
+
+        assert_equal 16, count
+        assert actual.first.include?("Bastias")
+        assert actual.last.include?("Ther")
+    end
 end

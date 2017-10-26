@@ -40,6 +40,21 @@ class Queue
         @attendees.select {|attendee| @queue << attendee if attendee.last_name == name }
     end
 
+    def queue_print(criteria = nil)
+        if criteria == "by last_name"
+            @queue.sort_by! { |attendee| attendee.last_name }
+            format_print
+        else
+            format_print
+        end.join("\n")
+    end
+
+    def format_print
+        @queue.map do |attendee|
+            "#{attendee.last_name}, #{attendee.first_name}, #{attendee.email_address}, #{attendee.zipcode}, #{attendee.city}, #{attendee.state}, #{attendee.street}, #{attendee.homephone}"
+        end
+    end
+
     def help(command = nil)
         command = command
         if command == "help load <filename>"

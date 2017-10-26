@@ -14,6 +14,7 @@ class ReaderTest < Minitest::Test
     reader = Reader.new("attendee_fixture.csv")
 
     assert_instance_of Array, reader.content
+    refute reader.content.empty?
   end
 
   def test_it_can_create_a_new_attendee
