@@ -12,6 +12,7 @@ class Attendee
     def initialize(info)
       make_it_pretty     = Cleaner.new
       @registration_date = info[:regdate]
+      # @registration_date = make_it_pretty.tidy_registration_date(info[:regdate])
       @first_name        = make_it_pretty.tidy_first_name(info[:first_name])
       @last_name         = make_it_pretty.tidy_last_name(info[:last_name])
       @email_address     = info[:email_address]

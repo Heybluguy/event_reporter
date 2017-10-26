@@ -3,6 +3,7 @@ require "./lib/attendee"
 
 class Reader
   attr_reader :content
+  
   def initialize(file_path)
     @content = parse_csv(file_path)
   end

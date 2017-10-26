@@ -22,8 +22,6 @@ class Queue
     end
 
     def load_attendees(csv_path = "full_event_attendees.csv")
-        # file = CSV.open csv_path, headers: true, header_converters: :symbol
-        # file.each {|row| @attendees << Attendee.new(row)}
         @attendees = Reader.new(csv_path).content
         "You have successfully loaded #{csv_path}"
     end
@@ -56,6 +54,9 @@ class Queue
         if criteria == "by last_name"
             @queue.sort_by! { |attendee| attendee.last_name }
             format_print
+        elsif criteria == "by first_name"
+            @queue.sort_by! { |attendee| attendee.first_name }
+            format_print
         else
             format_print
         end.join("\n")
@@ -64,9 +65,10 @@ class Queue
     def save_to(file_name)
         file = File.open(file_name, "w")
         format_csv
-        formatted_csv = @queue.unshift("RegDate,first_Name,last_Name,Email_Address,HomePhone,Street,City,State,Zipcode").join("\n")
-        file.write(formatted_csv)
+        formatted_csv = @queue.unshift("RegDate,first_Name,last_Name,Email_Address,HomePhone,Street,City,State,Zipcode")
+        file.write(formatted_csv.join("\n"))
         file.close
+        @queue.shift
     end
 
     def format_print

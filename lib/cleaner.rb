@@ -1,5 +1,9 @@
 class Cleaner
 
+      # def tidy_registration_date(registration_date)
+      #   registration_date.to_s if registration_date
+      # end
+
       def tidy_zipcode(zipcode)
         zipcode.to_s.rjust(5,"0")[0..4]
       end
