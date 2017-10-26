@@ -23,10 +23,17 @@ class Queue
     def load_attendees(csv_path = "full_event_attendees.csv")
         file = CSV.open csv_path, headers: true, header_converters: :symbol
         file.each {|row| @attendees << Attendee.new(row)}
+        "You have successfully loaded #{csv_path}"
     end
 
     def find_first_name(name)
-        @queue = @attendees.select {|attendee| attendee.first_name == name.capitalize }
+        queue_clear
+        @attendees.select {|attendee| @queue << attendee if attendee.first_name == name.capitalize }
+    end
+
+    def find_last_name(name)
+        queue_clear
+        @attendees.select {|attendee| @queue << attendee if attendee.last_name == name.capitalize }
     end
 
     def help(command = nil)

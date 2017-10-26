@@ -32,7 +32,11 @@ class QueueTest < MiniTest::Test
     def test_queue_can_find_first_name_john
         queue = Queue.new
         queue.load_attendees
-        actual = queue.find_first_name("John").count
+        actual = queue.find_first_name("John")
+
+        assert_equal "John", actual.first.first_name
+
+        actual = queue.queue_count
 
         assert_equal 63, actual
     end
@@ -68,4 +72,98 @@ class QueueTest < MiniTest::Test
 
         assert_equal expected, actual
     end
+
+    def test_help_queue_save_to_explains_save_function
+        queue = Queue.new
+        actual = queue.help("help queue save to")
+        expected = "<queue save to <filename.csv>> : Export the current queue to the specified filename as a CSV."
+
+        assert_equal expected, actual
+    end
+
+    def test_help_queue_export_html_explains_html_exporting_function
+        queue = Queue.new
+        actual = queue.help("help queue export html")
+        expected = "<queue export html <filename.csv>> : Export the current queue to the specified filename as a valid HTML file."
+
+        assert_equal expected, actual
+    end
+
+    def test_help_queue_print_explains_printing_function
+        queue = Queue.new
+        actual = queue.help("help find")
+        expected = "<find <attribute> <criteria>> : Populates the queue with all records matching the criteria for the given attribute."
+
+        assert_equal expected, actual
+    end
+
+    def test_help_queue_clear_explains_clearing_function
+        queue = Queue.new
+        actual = queue.help("help queue clear")
+        expected = "Empty the queue."
+
+        assert_equal expected, actual
+    end
+
+    def test_find_first_name_mary_finds_all_mary_attendees
+        queue = Queue.new
+        queue.load_attendees
+        actual = queue.find_first_name("Mary")
+
+        assert_equal "Mary", actual.first.first_name
+
+        actual = queue.queue_count
+
+        assert_equal 16, actual
+    end
+
+    def test_find_by_first_name_is_case_insensitive
+        queue = Queue.new
+        queue.load_attendees
+        actual = queue.find_first_name("mArY")
+
+        assert_equal "Mary", actual.first.first_name
+
+        actual = queue.queue_count
+
+        assert_equal 16, actual
+    end
+
+    def test_find_last_name_smith_finds_all_mary_attendees
+        queue = Queue.new
+        queue.load_attendees
+        actual = queue.find_last_name("Smith")
+
+        assert_equal "Smith", actual.first.last_name
+
+        actual = queue.queue_count
+
+        assert_equal 35, actual
+    end
+
+    def test_find_by_last_name_is_case_insensitive
+        queue = Queue.new
+        queue.load_attendees
+        actual = queue.find_last_name("SmITh")
+
+        assert_equal "Smith", actual.first.last_name
+
+        actual = queue.queue_count
+
+        assert_equal 35, actual
+    end
+
+    def test_find_by_first_name_can_find_two_word_first_names
+        queue = Queue.new
+        queue.load_attendees
+        actual = queue.find_first_name("Mary kate")
+
+        assert_equal "Mary kate", actual.first.first_name
+
+        actual = queue.queue_count
+
+        assert_equal 1, actual
+    end
+
+
 end
