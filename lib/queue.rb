@@ -1,102 +1,54 @@
-require "csv"
-require "./lib/cleaner"
-require "./lib/attendee"
+require 'csv'
+require './lib/cleaner'
+require './lib/attendee'
 
 class Queue
-  attr_reader :queue
+    attr_reader :attendees,
+                :queue
 
-  def initialize
-     @cleaner = Cleaner.new
-     @queue = []
-     @attendees = []
-  end
-
-  def load_attendees(csv_path)
-    contents = CSV.open csv_path, headers: true, header_converters: :symbol
-    contents.each do |row|
-      @attendees << Attendee.new(row)
+    def initialize
+        @cleaner = Cleaner.new
+        @queue = []
+        @attendees = []
     end
-  end
 
-  def find_first_name(name)
-    queue_clear
-    @attendees.select do |attendee|
-      @queue << attendee if attendee.first_name.casecmp(name) == 0
+    def queue_count
+        @queue.length
     end
-    make_names_pretty(@queue)
-  end
 
-  def find_last_name(name)
-    queue_clear
-    @attendees.select do |attendee|
-      @queue << attendee if attendee.last_name.casecmp(name) == 0
+    def queue_clear
+        @queue = []
     end
-    make_names_pretty(@queue)
-  end
 
-  def find_city(city)
-    queue_clear
-    @attendees.select do |attendee|
-      @queue << attendee if attendee.city.casecmp(city) == 0
+    def load_attendees(csv_path = "./data/full_event_attendees.csv")
+        file = CSV.open csv_path, headers: true, header_converters: :symbol
+        file.each {|row| @attendees << Attendee.new(row)}
     end
-    make_names_pretty(@queue)
-    @queue
-  end
 
-  def find_state(state)
-    queue_clear
-    @attendees.select do |attendee|
-      @queue << attendee if attendee.state.casecmp(state) == 0
+    def find_first_name(name)
+        @queue = @attendees.select {|attendee| attendee.first_name == name.capitalize }
     end
-    make_names_pretty(@queue)
-    @queue
-  end
 
-
-  def make_names_pretty(queue)
-    @queue.map do |attendee|
-      attendee.first_name = attendee.first_name.capitalize
+    def help(command = nil)
+        command = command
+        if command == "help load <filename>"
+            @help = "Erases any previously loaded data and loads provided file. If no filename is given, <full_event_attendees.csv> will be loaded by default."
+        elsif command == "help find"
+            @help = "<find <attribute> <criteria>> : Populates the queue with all records matching the criteria for the given attribute."
+        elsif command == "help queue count"
+            @help = "Outputs how many records are in the current queue."
+        elsif command == "help queue clear"
+            @help = "Empty the queue."
+        elsif command == "help queue print"
+            @help = "Prints out current queue populated with current queue."
+        elsif command == "help queue print by"
+            @help = "<queue print by <attribute>> : Prints current queue data table sorted by the specified attribute like 'zipcode'."
+        elsif command == "help queue save to"
+            @help = "<queue save to <filename.csv>> : Export the current queue to the specified filename as a CSV."
+        elsif command == "help queue export html"
+            @help = "<queue export html <filename.csv>> : Export the current queue to the specified filename as a valid HTML file."
+        else
+            @help = "Available commands:\n<load <filename>>\n<find <attribute> <criteria>>\n<queue count>\n<queue clear>\n<queue print>\n<queue print by <attribute>>\n<queue save to <filename.csv>>\n<queue export html <filename.csv>>\n<queue clear>\n<queue clear>\n<queue clear>"
+        end
     end
-  end
-
-  def queue_clear
-    @queue = []
-  end
-
-  def queue_count
-    @queue.count
-  end
-
-  def help(commands = {})
-    if commands == "queue count"
-      "Output how many records are in the current queue"
-    elsif commands == "queue print"
-      "Print out a tab-delimited data table with a header row following this format:"
-    else
-      "load\nqueue\nqueue count\nqueue clear\nfind\nfind first_name\nfind last_name\nfind reg_date\nfind email_address\nfind homephone\nfind street\nfind city\nfind state\nfind zipcode\nqueue print\nqueue print by\nqueue save to\nquit\n"
-    end
-  end
-
-  def queue_print(commands = {})
-    if commands == "by last_name"
-      @queue.sort_by! {|attendee| attendee.last_name.downcase }
-      @queue.map! { |attendee| "#{attendee.registration_date}, #{attendee.first_name}, #{attendee.last_name}, #{attendee.email_address}, #{attendee.homephone}, #{attendee.street}, #{attendee.city}, #{attendee.state}, #{attendee.zipcode}"}
-    else
-      @queue.map { |attendee| "#{attendee.registration_date}, #{attendee.first_name}, #{attendee.last_name}, #{attendee.email_address}, #{attendee.homephone}, #{attendee.street}, #{attendee.city}, #{attendee.state}, #{attendee.zipcode}"}
-    end
-    @queue
-  end
-
-  def format_csv
-    @queue.map! do |attendee|
-        "#{attendee.last_name}, #{attendee.first_name}, #{attendee.email_address}, #{attendee.zipcode}, #{attendee.city}, #{attendee.state}, #{attendee.street}, #{attendee.homephone}"
-    end
-    @queue.unshift("LAST NAME  FIRST NAME  EMAIL  ZIPCODE  CITY  STATE  ADDRESS  PHONE").join("\n")
-  end
-
-  def queue_save(file_name)
-    save_file = File.open(file_name, "w")
-    save_file.write(format_csv)
-    save_file.close
-  end
 end
