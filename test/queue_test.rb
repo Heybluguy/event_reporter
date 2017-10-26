@@ -52,7 +52,7 @@ class QueueTest < MiniTest::Test
     def test_help_returns_list_of_commands
         queue = Queue.new
         actual = queue.help
-        expected = "Available commands:\n<load <filename>>\n<find <attribute> <criteria>>\n<queue count>\n<queue clear>\n<queue print>\n<queue print by <attribute>>\n<queue save to <filename.csv>>\n<queue export html <filename.csv>>\n<queue clear>\n<queue clear>\n<queue clear>"
+        expected = "Available commands:\n<load <filename>>\n<find <attribute> <criteria>>\n<queue count>\n<queue clear>\n<queue print>\n<queue print by <attribute>>\n<queue save to <filename.csv>>\n<queue export html <filename.csv>>"
 
         assert_equal expected, actual
     end
@@ -170,7 +170,7 @@ class QueueTest < MiniTest::Test
         queue.load_attendees
         actual = queue.find_first_name("mary kate")
         count = queue.queue_count
-        expected = "Curry, Mary Kate, wmppydaymaker@jumpstartlab.com, 21230, Baltimore, MD, 1509 Jackson Street, 202-328-1000"
+        expected = "Curry,Mary Kate,wmppydaymaker@jumpstartlab.com,21230,Baltimore,MD,1509 Jackson Street,202-328-1000"
 
         assert_equal 1, count
         assert_equal "Mary Kate", actual.first.first_name
@@ -187,5 +187,43 @@ class QueueTest < MiniTest::Test
         assert_equal 16, count
         assert actual.first.include?("Bastias")
         assert actual.last.include?("Ther")
+    end
+
+    def test_queue_find_city_can_find_by_salt_lake_city
+        queue = Queue.new
+        queue.load_attendees
+        queue.find_city("Salt Lake City")
+        actual = queue.queue_count
+
+        assert_equal 13, actual
+    end
+
+    def test_queue_find_state_can_find_by_DC
+        queue = Queue.new
+        queue.load_attendees
+        queue.find_state("dc")
+        actual = queue.queue_count
+
+        assert_equal 236, actual
+
+        actual = queue.queue_print("by last_name")
+
+        actual_1 = actual.split('\n').first.split(",")[0]
+        actual_2 = actual.split('\n').first.split(",")[5]
+
+        assert_equal "Abraham", actual_1
+        assert_equal "DC", actual_2
+    end
+
+    def test_save_to_saves_current_queue_to_csv_file
+        queue = Queue.new
+        queue.load_attendees
+        queue.find_city("Salt Lake City")
+
+        assert_equal 13, queue.queue_count
+
+        queue.save_to("city_sample.csv")
+
+        assert File.exist?("city_sample.csv")
     end
 end

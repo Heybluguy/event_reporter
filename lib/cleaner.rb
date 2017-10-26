@@ -21,6 +21,8 @@ class Cleaner
       end
 
       def tidy_phone_number(number)
+        if !number.to_s.empty?
         [$1, $2, $3].join("-") if number.gsub(/\D/, "").match(/^1?(\d{3})(\d{3})(\d{4})/)
+        end
       end
-end
+  end

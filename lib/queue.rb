@@ -8,8 +8,8 @@ class Queue
                 :queue
 
     def initialize
-        @cleaner = Cleaner.new
-        @queue = []
+        @cleaner   = Cleaner.new
+        @queue     = []
         @attendees = []
     end
 
@@ -40,6 +40,18 @@ class Queue
         @attendees.select {|attendee| @queue << attendee if attendee.last_name == name }
     end
 
+    def find_city(city)
+        queue_clear
+        city = @cleaner.tidy_city(city)
+        @attendees.select {|attendee| @queue << attendee if attendee.city == city }
+    end
+
+    def find_state(state)
+        queue_clear
+        state = @cleaner.tidy_state(state)
+        @attendees.select {|attendee| @queue << attendee if attendee.state == state}
+    end
+
     def queue_print(criteria = nil)
         if criteria == "by last_name"
             @queue.sort_by! { |attendee| attendee.last_name }
@@ -49,9 +61,23 @@ class Queue
         end.join("\n")
     end
 
+    def save_to(file_name)
+        file = File.open(file_name, "w")
+        format_csv
+        formatted_csv = @queue.unshift("RegDate,first_Name,last_Name,Email_Address,HomePhone,Street,City,State,Zipcode").join("\n")
+        file.write(formatted_csv)
+        file.close
+    end
+
     def format_print
-        @queue.map do |attendee|
-            "#{attendee.last_name}, #{attendee.first_name}, #{attendee.email_address}, #{attendee.zipcode}, #{attendee.city}, #{attendee.state}, #{attendee.street}, #{attendee.homephone}"
+        @queue.map! do |attendee|
+            "#{attendee.last_name},#{attendee.first_name},#{attendee.email_address},#{attendee.zipcode},#{attendee.city},#{attendee.state},#{attendee.street},#{attendee.homephone}"
+        end
+    end
+
+    def format_csv
+        @queue.map! do |attendee|
+            "#{attendee.registration_date},#{attendee.first_name},#{attendee.last_name},#{attendee.email_address},#{attendee.homephone},#{attendee.street},#{attendee.city},#{attendee.state},#{attendee.zipcode}"
         end
     end
 
@@ -74,7 +100,7 @@ class Queue
         elsif command == "help queue export html"
             @help = "<queue export html <filename.csv>> : Export the current queue to the specified filename as a valid HTML file."
         else
-            @help = "Available commands:\n<load <filename>>\n<find <attribute> <criteria>>\n<queue count>\n<queue clear>\n<queue print>\n<queue print by <attribute>>\n<queue save to <filename.csv>>\n<queue export html <filename.csv>>\n<queue clear>\n<queue clear>\n<queue clear>"
+            @help = "Available commands:\n<load <filename>>\n<find <attribute> <criteria>>\n<queue count>\n<queue clear>\n<queue print>\n<queue print by <attribute>>\n<queue save to <filename.csv>>\n<queue export html <filename.csv>>"
         end
     end
 end
