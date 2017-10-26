@@ -17,7 +17,7 @@ class QueueTest < MiniTest::Test
 
     def test_load_attendees_loads_csv_file
         queue = Queue.new
-        queue.load_attendees("./data/attendee_fixture.csv")
+        queue.load_attendees("attendee_fixture.csv")
 
         assert_equal 50, queue.attendees.length
     end

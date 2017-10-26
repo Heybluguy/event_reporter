@@ -20,7 +20,7 @@ class Queue
         @queue = []
     end
 
-    def load_attendees(csv_path = "./data/full_event_attendees.csv")
+    def load_attendees(csv_path = "full_event_attendees.csv")
         file = CSV.open csv_path, headers: true, header_converters: :symbol
         file.each {|row| @attendees << Attendee.new(row)}
     end
