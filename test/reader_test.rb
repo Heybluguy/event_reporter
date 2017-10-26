@@ -1,7 +1,6 @@
 require "minitest/autorun"
 require "minitest/pride"
 require "./lib/reader"
-require "pry"
 
 class ReaderTest < Minitest::Test
   def test_it_exist
