@@ -158,12 +158,10 @@ class QueueTest < MiniTest::Test
         queue.load_attendees
         actual = queue.find_first_name("Mary kate")
 
-        assert_equal "Mary kate", actual.first.first_name
+        assert_equal "Mary Kate", actual.first.first_name
 
         actual = queue.queue_count
 
         assert_equal 1, actual
     end
-
-
 end

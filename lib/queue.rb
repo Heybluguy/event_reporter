@@ -1,6 +1,7 @@
 require 'csv'
 require './lib/cleaner'
 require './lib/attendee'
+require './lib/reader'
 
 class Queue
     attr_reader :attendees,
@@ -21,19 +22,22 @@ class Queue
     end
 
     def load_attendees(csv_path = "full_event_attendees.csv")
-        file = CSV.open csv_path, headers: true, header_converters: :symbol
-        file.each {|row| @attendees << Attendee.new(row)}
+        # file = CSV.open csv_path, headers: true, header_converters: :symbol
+        # file.each {|row| @attendees << Attendee.new(row)}
+        @attendees = Reader.new(csv_path).content
         "You have successfully loaded #{csv_path}"
     end
 
     def find_first_name(name)
         queue_clear
-        @attendees.select {|attendee| @queue << attendee if attendee.first_name == name.capitalize }
+        name = @cleaner.tidy_first_name(name)
+        @attendees.select {|attendee| @queue << attendee if attendee.first_name == name }
     end
 
     def find_last_name(name)
         queue_clear
-        @attendees.select {|attendee| @queue << attendee if attendee.last_name == name.capitalize }
+        name = @cleaner.tidy_last_name(name)
+        @attendees.select {|attendee| @queue << attendee if attendee.last_name == name }
     end
 
     def help(command = nil)
